@@ -1,0 +1,107 @@
+//unk = unknown, meaningful
+//cbz = unknown, can be zero
+
+typedef uint32_t rel_ptr_t; //ptr = rel_ptr + (char*)&rel_ptr
+
+struct shdr
+{
+    uint64_t cbz00;
+    uint64_t cbz08;
+    uint64_t footer_offset_10;
+    uint64_t zero18;
+    uint32_t zero20;
+    char magic24[4]; // "Shdr"
+    uint64_t cbz28;
+    uint32_t zero30;
+    uint16_t size34; //=footer_offset_10-entry3c-0x10
+    uint16_t cbz36;
+    uint32_t zero38;
+    uint32_t entry3c; //gpu code starts at entry3c+0x34
+    uint32_t cbz40;
+    uint16_t unk44; //0x14x for vertex, smaller for fragment. probably some size
+    uint16_t cbz46;
+    uint64_t unk48; //8, setting to 0 causes crash
+    uint32_t unk50; //4, setting to 0 disables shader, setting to nonzero causes visual artifacts (black output), setting to 12 causes crash
+    uint32_t unk54; //2, setting to 0 causes crash
+    uint8_t unk58; //1 for vertex, 2->0 for fragment. often 2 for vertex too
+    uint8_t cbz59;
+    uint16_t cbz5a;
+    uint32_t cbz5c;
+    uint16_t unk60; //0x17 for vertex, 0 for fragment (confirmed)
+    uint16_t unk62; //2 for vertex, 0 for fragment (confirmed)
+    uint32_t cbz64;
+    uint32_t channel_mask_68; //R=1, G=2, B=4, A=8, 0x20400 for vertex shader
+    uint32_t cbz6c;
+    uint32_t gcn_bytecode[]; //at entry3c+0x34
+};
+
+//footer_offset_10=0xac, struct offset 0xac
+struct orb_shdr
+{
+    uint64_t cbz00;
+    char magic08[8]; // "OrbShdr"
+    uint32_t cbz10;
+    uint8_t unk14[4]; //2 1 12 5, changing causes artifacts (wrong color)
+    uint64_t cbz18;
+    uint32_t cbz20;
+    uint32_t cnt24;
+    uint32_t cnt28; //+32 to program size
+    uint32_t number_of_uniforms_2c;
+    uint32_t number_of_samplers_30;
+    uint8_t number_of_inputs_34;
+    uint8_t number_of_outputs_35;
+    uint8_t cnt36; //+16 to program size
+    uint8_t cbz37;
+    uint32_t cnt38; //+1 to program size
+    uint32_t strings_size_3c; //+1 to program size
+    struct orb_shdr_unk24
+    {
+        uint32_t index00;
+        uint32_t zero04;
+        uint8_t unk08; //always 2
+        uint8_t cbz09;
+        uint8_t cbz0a;
+        uint8_t zero0b;
+        uint32_t zero0c;
+        uint32_t zero10;
+        rel_ptr_t name14;
+    } unk40[cnt24-1];
+    uint32_t cbz40; //assumes cnt24=1
+    uint32_t size_of_uniform_space_44;
+    uint16_t unk48; //changing causes uniform not found
+    uint16_t cbz4a;
+    uint32_t number_of_uniforms_4c; //is it?
+    uint32_t zero50;
+    rel_ptr_t global_cb_s_54; // "__GLOBAL_CB__"
+    struct orb_shdr_uniform
+    {
+        uint8_t type00; //TODO: enum table
+        uint8_t is_enabled_01;
+        uint8_t zero02;
+        uint8_t cbz03;
+        uint32_t offset04; //some offset or size
+        uint32_t size08; //xxx: error message says its offset
+        uint32_t cbz0c;
+        uint64_t cbz10;
+        uint32_t cbz18;
+        rel_ptr_t name_offset_1c;
+        rel_ptr_t no_name_s_20; // "(no_name)"
+    } uniforms[number_of_uniforms_2c];
+    struct orb_shdr_sampler
+    {
+        uint64_t zero00;
+        uint32_t index08;
+        rel_ptr_t name0c;
+    } samplers[number_of_samplers_30];
+    struct orb_shdr_attrib
+    {
+        rel_ptr_t unk_s_00;
+        uint8_t type04; //TODO: enum table
+        uint8_t marker05;
+        uint8_t zero06;
+        uint8_t index07;
+        uint32_t zero08;
+        rel_ptr_t name0c;
+    } attribs[number_of_inputs_34+number_of_outputs_35];
+    char strings[];
+};
