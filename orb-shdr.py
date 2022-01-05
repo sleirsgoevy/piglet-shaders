@@ -34,13 +34,14 @@ def read_rel_s(off):
 
 print()
 print('# orb_shdr:')
+print('buffer_source =', hex(opeek(-4, 4)))
 print('magic =', data[orb_shdr_offset+0x8:orb_shdr_offset+0x10])
 print('unk14 =', data[orb_shdr_offset+0x14:orb_shdr_offset+0x18].hex())
-cnt24 = opeek(0x24, 4)
-print('cnt24 =', hex(cnt24))
+number_of_sampler_uniforms = opeek(0x24, 4)
+print('number_of_sampler_uniforms =', hex(number_of_sampler_uniforms))
 print('cnt28 (x32) =', hex(opeek(0x28, 4)))
 number_of_uniforms_2c = opeek(0x2c, 4)
-print('number_of_uniforms_2c =', number_of_uniforms_2c)
+print('number_of_uniforms_2c =', hex(number_of_uniforms_2c))
 number_of_samplers = opeek(0x30, 4)
 print('number_of_samplers =', hex(number_of_samplers))
 number_of_inputs = opeek(0x34, 1)
@@ -55,7 +56,7 @@ print('strings_size =', hex(strings_size))
 idx = 0x40
 print()
 print('## sampler uniforms')
-for i in range(cnt24-1):
+for i in range(number_of_sampler_uniforms-1):
     print('----')
     print('index =', hex(opeek(idx, 4)))
     print('unk08 =', hex(opeek(idx+8, 4))) # all but the lowest 2 is cbz

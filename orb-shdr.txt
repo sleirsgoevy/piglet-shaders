@@ -20,7 +20,7 @@ struct shdr
     uint32_t cbz40;
     uint16_t nreg44; //nvec = (nreg44%64+1)*4, nscal = (nreg44/64+1)*8
     uint16_t cbz46;
-    uint64_t unk48; //8, setting to 0 causes crash
+    uint64_t unk48; //8, setting to 0 causes crash. seems that any value >=8 and %4==0 will work
     uint32_t always4_50; //4, setting to 0 disables shader, setting to nonzero causes visual artifacts (black output), setting to 12 causes crash
     uint32_t shader_type_54; //0 for vertex, 2 for fragment
     uint8_t unk58; //1 for vertex, 2->0 for fragment. often 2 for vertex too
@@ -34,16 +34,19 @@ struct shdr
     uint32_t gcn_bytecode[]; //at entry3c+0x34
 };
 
-//footer_offset_10=0xac, struct offset 0xac
+//footer_offset_10=0xac, struct offset 0xa8
 struct orb_shdr
 {
-    uint64_t cbz00;
+    uint32_t buffer_source_fc; //if not 2, reads clear color instead of uniforms
+    uint32_t cbz00;
+    uint32_t cbz04;
     char magic08[8]; // "OrbShdr"
     uint32_t cbz10;
-    uint8_t unk14[4]; //2 1 12 5, changing causes artifacts (wrong color)
+    uint8_t unk14[2]; //2 1, changing causes artifacts
+    uint16_t cbz16;
     uint64_t cbz18;
     uint32_t cbz20;
-    uint32_t cnt24;
+    uint32_t number_of_sampler_uniforms_24;
     uint32_t cnt28; //+32 to program size
     uint32_t number_of_uniforms_2c;
     uint32_t number_of_samplers_30;
@@ -94,13 +97,13 @@ struct orb_shdr
     } samplers[number_of_samplers_30];
     struct orb_shdr_attrib
     {
-        rel_ptr_t unk_s_00;
-        uint8_t type04; //TODO: enum table
-        uint8_t marker05;
-        uint8_t zero06;
-        uint8_t index07;
-        uint32_t zero08;
-        rel_ptr_t name0c;
+        uint8_t type00; //TODO: enum table
+        uint8_t marker01;
+        uint8_t zero02;
+        uint8_t index03;
+        uint32_t zero04;
+        rel_ptr_t name08;
+        rel_ptr_t name_caps_0c;
     } attribs[number_of_inputs_34+number_of_outputs_35];
     char strings[];
 };
