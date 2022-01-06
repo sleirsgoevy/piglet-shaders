@@ -20,13 +20,13 @@ struct shdr
     uint32_t cbz40;
     uint16_t nreg44; //nvec = (nreg44%64+1)*4, nscal = (nreg44/64+1)*8
     uint16_t cbz46;
-    uint64_t unk48; //8, setting to 0 causes crash. seems that any value >=8 and %4==0 will work
+    uint64_t m0_init_reg_48; //must be %4==0, the register for initializing M0 is s[m0_init_reg_48/2]
     uint32_t always4_50; //4, setting to 0 disables shader, setting to nonzero causes visual artifacts (black output), setting to 12 causes crash
     uint32_t shader_type_54; //0 for vertex, 2 for fragment
     uint8_t unk58; //1 for vertex, 2->0 for fragment. often 2 for vertex too
     uint8_t cbz59;
     uint16_t cbz5a;
-    uint32_t cbz5c;
+    uint32_t has_coords_5c; //if true, coords for interpolation are in v[0:1]
     uint32_t shader_type_60; //0x20017 for vertex, 0 for fragment
     uint32_t cbz64;
     uint32_t channel_mask_68; //R=1, G=2, B=4, A=8, 0x20400 for vertex shader
@@ -37,6 +37,12 @@ struct shdr
 //footer_offset_10=0xac, struct offset 0xa8
 struct orb_shdr
 {
+    uint16_t cbz_f0;
+    uint16_t cbz_f2;
+    uint16_t unk_f4;
+    uint16_t uniform_ptr_reg_f6; //s[uniform_ptr_reg_f6:uniform_ptr_reg_f6+3]
+    uint16_t unk_f8;
+    uint16_t sampler_ptr_reg_fa; //s[sampler_ptr_reg_fa:sampler_ptr_reg_fa+3]
     uint32_t buffer_source_fc; //if not 2, reads clear color instead of uniforms
     uint32_t cbz00;
     uint32_t cbz04;
