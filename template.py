@@ -38,13 +38,14 @@ with open(sys.argv[1]) as file:
             assert len(line) == 2
             sampler_ptr_reg = int(line[1])
         elif line[0] == 'uniform':
-            assert len(line) == 5
+            assert len(line) in (5, 6)
             name = line[1]
             tp = int(line[2])
             offset = int(line[3])
             size = int(line[4])
-            size_of_uniform_space = max(size_of_uniform_space, offset+size)
-            uniforms.append((tp, offset, size, name))
+            arraysz = int(line[5]) if len(line) > 5 else 1
+            size_of_uniform_space = max(size_of_uniform_space, offset+size*arraysz)
+            uniforms.append((tp, offset, size, arraysz, name))
             strings += name + '\0'
         elif line[0] == 'sampler':
             assert len(line) == 2
@@ -137,13 +138,14 @@ data += len(uniforms).to_bytes(4, 'little')
 data += bytes(4)
 data += (strings_start - len(data)).to_bytes(4, 'little')
 
-for (tp, offset, size, name) in uniforms:
+for (tp, offset, size, arraysz, name) in uniforms:
     data += bytes((tp,))
     data += bytes((1,))
     data += bytes(2)
     data += offset.to_bytes(4, 'little')
-    data += size.to_bytes(4, 'little')
-    data += bytes(16)
+    data += (size * arraysz).to_bytes(4, 'little')
+    data += arraysz.to_bytes(4, 'little')
+    data += bytes(12)
     data += (strings_start + strings.find(name+'\0') - len(data)).to_bytes(4, 'little')
     data += (strings_start + 14 - len(data)).to_bytes(4, 'little')
 

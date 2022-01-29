@@ -39,17 +39,17 @@ for i in data.split('\n'):
             0x1405, # GL_UNSIGNED_INT
             0x1406, # GL_FLOAT
         ):
-            size *= 4
+            item_size = 4
         elif tp in range(0x8b50, 0x8b53): # GL_FLOAT_VEC?
-            size *= 4 * (tp - 0x8b4e)
+            item_size = 4 * (tp - 0x8b4e)
         elif tp in range(0x8b53, 0x8b56): # GL_INT_VEC?
-            size *= 4 * (tp - 0x8b51)
+            item_size = 4 * (tp - 0x8b51)
         elif tp in range(0x8b5a, 0x8b5d): # GL_FLOAT_MAT?
-            size *= 4 * (tp - 0x8b58) * (tp - 0x8b58)
+            item_size = 4 * (tp - 0x8b58) * (tp - 0x8b58)
         else:
             raise NotImplementedError(hex(tp))
-        uniforms.append((tp, offset, size, name))
-        offset += size
+        uniforms.append((tp, offset, size, item_size, name))
+        offset += size * item_size
 
 sgprs = int(shader_stats['SGPRS'])
 vgprs = int(shader_stats['VGPRS'])
@@ -87,6 +87,10 @@ while idx < len(shader):
                 's_mov_b64 s[%d:%d], s[%d:%d]'%(q+i, q+i+1, samplers_base2+i, samplers_base2+i+1)
                 for i in (0, 2)
             )
+        ss = shader[idx].split(' ')
+        if ss[0].endswith('_e32'):
+            ss[0] = ss[0][:-4]
+        shader[idx] = ' '.join(ss)
     idx += 1
 
 shader = '\n'.join(shader)
@@ -129,8 +133,8 @@ with open(sys.argv[2], 'w') as file:
         print('uniform_reg', uniform_base, file=file)
         if samplers:
             print('sampler_reg', samplers_base2, file=file)
-    for (tp, offset, sz, name) in uniforms:
-        print('uniform', name, orbis_types[tp], offset, sz, file=file)
+    for (tp, offset, sz, itemsz, name) in uniforms:
+        print('uniform', name.split('[', 1)[0], orbis_types[tp], offset, itemsz, sz, file=file)
     for name in samplers:
         print('sampler', name, file=file)
     print('output', 'main', 3, 0, file=file)
