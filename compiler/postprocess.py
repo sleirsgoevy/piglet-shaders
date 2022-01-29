@@ -71,6 +71,10 @@ while idx < len(shader):
             q = shader[idx].split(', ')
             q[1] = 's[%d:%d]'%(uniform_base, uniform_base+3)
             shader[idx] = ', '.join(q)
+        elif shader[idx].startswith('buffer_load_'):
+            q = shader[idx].split(', ')
+            q[2] = 's[%d:%d]'%(uniform_base, uniform_base+3)
+            shader[idx] = ', '.join(q)
         elif samplers and shader[idx].startswith('s_load_dwordx8 ') and shader[idx].endswith(', 0x100'):
             q = int(shader[idx].split('[', 1)[1].split(':', 1)[0])
             shader[idx:idx+1] = (
