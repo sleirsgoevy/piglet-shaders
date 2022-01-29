@@ -89,6 +89,30 @@ shader = '\n'.join(shader)
 
 m0 = uniform_base + 4
 
+orbis_types = {
+    0x1406: 0,
+    0x8b50: 1,
+    0x8b51: 2,
+    0x8b52: 3,
+    0x1404: 8,
+    0x8b53: 9,
+    0x8b54: 10,
+    0x8b55: 11,
+    0x1405: 12,
+    0x8dc6: 13,
+    0x8dc7: 14,
+    0x8dc8: 15,
+    0x8b5a: 25,
+    0x8b65: 26,
+    0x8b66: 27,
+    0x8b67: 29,
+    0x8b5b: 30,
+    0x8b68: 31,
+    0x8b69: 33,
+    0x8b6a: 34,
+    0x8b5c: 35,
+}
+
 with open(sys.argv[2], 'w') as file:
     print('gprs', sgprs, vgprs, file=file)
     if m0 >= 32:
@@ -102,7 +126,7 @@ with open(sys.argv[2], 'w') as file:
         if samplers:
             print('sampler_reg', samplers_base2, file=file)
     for (tp, offset, sz, name) in uniforms:
-        print('uniform', name, 3, offset, sz, file=file)
+        print('uniform', name, orbis_types[tp], offset, sz, file=file)
     for name in samplers:
         print('sampler', name, file=file)
     print('output', 'main', 3, 0, file=file)
