@@ -18,7 +18,7 @@ This is a PoC for compiling Piglet fragment shaders using Mesa3D.
 ```
 cd compiler
 make
-bash compile.sh vertex.glsl fragment.glsl output.bin # only outputs the fragment part for now
+bash compile.sh vertex.glsl fragment.glsl vertex.bin fragment.bin
 ```
 
 ## Known non-trivial bugs (require Mesa patching to fix)
