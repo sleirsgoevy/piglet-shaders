@@ -10,6 +10,7 @@ footer_offset = peek(0x10, 8)
 print('footer_offset =', hex(footer_offset))
 print('magic =', data[0x24:0x28])
 print('size =', hex(peek(0x34, 2)))
+print('unk37 =', hex(peek(0x37, 1)))
 print('entry =', hex(peek(0x3c, 4)))
 nreg = peek(0x44, 2)
 print('nreg =', hex(nreg)+' (%d scalar, %d vector)'%(nreg//64*8+8, nreg%64*4+4))
@@ -35,6 +36,7 @@ def read_rel_s(off):
 
 print()
 print('# orb_shdr:')
+print('unk_f0 =', hex(opeek(-16, 2)))
 print('unk_f4 =', hex(opeek(-12, 2)))
 print('sampler_ptr_reg =', hex(opeek(-10, 2)))
 print('unk_f8 =', hex(opeek(-8, 2)))
@@ -98,7 +100,7 @@ for i in range(number_of_samplers):
 print()
 print('## inputs')
 for i in range(number_of_inputs+number_of_outputs):
-    if i == number_of_outputs:
+    if i == number_of_inputs:
         print()
         print('## outputs')
     print('----')

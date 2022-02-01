@@ -20,3 +20,9 @@ cd compiler
 make
 bash compile.sh vertex.glsl fragment.glsl output.bin # only outputs the fragment part for now
 ```
+
+## Known non-trivial bugs (require Mesa patching to fix)
+
+* Matrices other than `mat4` are broken (std140)
+* Arrays of anything but `vec4` and `mat4` are broken (std140)
+* Constant arrays are not supported, pass them as uniforms instead

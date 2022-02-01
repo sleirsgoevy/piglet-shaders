@@ -109,6 +109,17 @@ int main(int argc, const char** argv)
         glGetActiveUniform(prog, i, 255, &namelen, &size, &type, name);
         printf("uniform %s type 0x%x size %d\n", name, (unsigned)type, size);
     }
+    GLint nAttributes = -1;
+    glGetProgramiv(prog, GL_ACTIVE_ATTRIBUTES, &nAttributes);
+    for(GLint i = 0; i < nAttributes; i++)
+    {
+        GLint size = -1;
+        GLenum type = -1;
+        GLint namelen = -1;
+        char name[256] = {0};
+        glGetActiveAttrib(prog, i, 255, &namelen, &size, &type, name);
+        printf("attribute %s type 0x%x size %d\n", name, (unsigned)type, size);
+    }
     glClearColor(0.0, 0.0, 0.0, 1.0);
     glClear(GL_COLOR_BUFFER_BIT);
     glDrawArrays(GL_TRIANGLES, 0, 1);
