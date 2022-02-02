@@ -1,9 +1,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stddef.h>
+#include <unistd.h>
+#include <fcntl.h>
 #include <ctype.h>
 #include <EGL/egl.h>
+#include <EGL/eglext.h>
 #include <GLES2/gl2.h>
+#include <gbm.h>
 
 static char* read_file(const char* path)
 {
@@ -57,7 +61,9 @@ int main(int argc, const char** argv)
         fprintf(stderr, "usage: victim <vertex.glsl> <fragment.glsl>\n");
         return 1;
     }
-    EGLDisplay disp = eglGetDisplay(EGL_DEFAULT_DISPLAY);
+    int fd = open("/dev/dri/renderD128", O_RDWR);
+    struct gbm_device* dev = gbm_create_device(fd);
+    EGLDisplay disp = eglGetPlatformDisplay(EGL_PLATFORM_GBM_MESA, dev, NULL);
     eglInitialize(disp, NULL, NULL);
     const EGLint attribs[] = {
         EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
