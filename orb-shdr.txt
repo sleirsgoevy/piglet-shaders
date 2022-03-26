@@ -30,7 +30,8 @@ struct shdr
     uint32_t has_coords_5c; //if true, coords for interpolation are in v[0:1]
     uint32_t shader_type_60; //0x20017 for vertex, 0 for fragment
     uint32_t cbz64;
-    uint32_t channel_mask_68; //R=1, G=2, B=4, A=8, 0x20400 for vertex shader
+    uint16_t channel_mask_68; //R=1, G=2, B=4, A=8, 0x400 for vertex shader
+    uint16_t nattrs6a; //number of attribute dwords to be loaded from memory into v[4:3+nattrs6a]
     uint32_t cbz6c;
     uint32_t gcn_bytecode[]; //at entry3c+0x34
 };

@@ -223,6 +223,7 @@ orbis_types = {
 with open(sys.argv[2], 'w') as file:
     if not fragment:
         print('vertex', file=file)
+        print('nattrs', 4*len(attributes), file=file)
     print('gprs', sgprs, vgprs, file=file)
     if m0 >= 32:
         print('m0', 16, file=file)

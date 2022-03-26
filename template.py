@@ -8,6 +8,7 @@ channel_mask = 15
 uniform_ptr_reg = 0
 sampler_ptr_reg = -1
 size_of_uniform_space = 0
+nattrs = 4
 uniforms = []
 samplers = []
 inputs = []
@@ -31,6 +32,9 @@ with open(sys.argv[1]) as file:
             assert n_sgpr in range(8, 105, 8)
             n_vgpr = int(line[2])
             assert n_vgpr in range(4, 257, 4)
+        elif line[0] == 'nattrs':
+            assert len(line) == 2
+            nattrs = int(line[1])
         elif line[0] == 'm0':
             assert len(line) == 2
             m0_reg = int(line[1])
@@ -80,7 +84,10 @@ with open(sys.argv[2], 'rb') as file:
     gcn_bytecode = file.read()
 
 if not fragment:
-    channel_mask = 0x20400
+    channel_mask = 0x400
+
+if fragment:
+    nattrs = 0
 
 if sampler_ptr_reg < 0:
     sampler_ptr_reg = 0 if fragment else 2
@@ -109,7 +116,8 @@ data += bytes(3)
 data += b'\x01\x00\x00\x00'
 data += b'\x00\x00\x00\x00' if fragment else b'\x17\x00\x02\x00'
 data += bytes(4)
-data += channel_mask.to_bytes(4, 'little')
+data += channel_mask.to_bytes(2, 'little')
+data += nattrs.to_bytes(2, 'little')
 data += bytes(4)
 
 data += gcn_bytecode

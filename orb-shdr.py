@@ -23,8 +23,10 @@ print('unk58 =', hex(unk58)+(' (vertex)' if unk58 == 1 else ' (fragment)' if unk
 print('has_coords =', hex(peek(0x5c, 4)))
 shader_type_60 = peek(0x60, 4)
 print('shader_type_60 =', hex(shader_type_60)+(' (vertex)' if shader_type_60 == 0x20017 else ' (fragment)' if shader_type_60 == 0 else ' (unknown)'))
-channel_mask = peek(0x68, 4)
-print('channel_mask =', hex(channel_mask)+(' (vertex)' if channel_mask == 0x20400 else ' (fragment)' if channel_mask < 16 else ' (unknown)'))
+channel_mask = peek(0x68, 2)
+print('channel_mask =', hex(channel_mask)+(' (vertex)' if channel_mask == 0x400 else ' (fragment)' if channel_mask < 16 else ' (unknown)'))
+nattrs = peek(0x6a, 2)
+print('nattrs =', hex(nattrs))
 
 orb_shdr_offset = footer_offset
 
